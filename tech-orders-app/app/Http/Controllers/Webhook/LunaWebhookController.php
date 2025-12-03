@@ -21,6 +21,7 @@ class LunaWebhookController extends Controller
             Log::warning('Luna webhook: token inválido', [
                 'query_token' => $token,
             ]);
+
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -30,7 +31,15 @@ class LunaWebhookController extends Controller
             'payload' => $data,
         ]);
 
-        // 2) Campos principais do payload
+        // 🔹 1.1) Tratamento especial para o webhook de teste da Luna
+        if (($data['event'] ?? null) === 'test-new-webhook') {
+            return response()->json([
+                'ok'      => true,
+                'message' => 'Webhook de teste da Luna recebido com sucesso',
+            ]);
+        }
+
+        // 2) Campos principais do payload (para pedidos reais)
         $externalId = $data['id'] ?? null;
         $event      = $data['event'] ?? null;
         $status     = $data['status'] ?? null;
@@ -41,6 +50,7 @@ class LunaWebhookController extends Controller
         $items   = $data['items']   ?? [];
         $address = $data['address'] ?? [];
 
+        // Precisamos no mínimo de id + client pra considerar um pedido válido
         if (!$externalId || empty($client)) {
             return response()->json(['error' => 'Dados insuficientes'], 422);
         }
@@ -49,7 +59,7 @@ class LunaWebhookController extends Controller
         $email = $client['email'] ?? null;
         $name  = $client['name'] ?? 'Cliente';
 
-        $cpf   = $client['doc'] ?? null;
+        $cpf     = $client['doc'] ?? null;
         $cpfHash = null;
 
         if ($cpf) {

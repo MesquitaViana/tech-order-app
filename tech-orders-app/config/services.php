@@ -31,7 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    // 🔥 NOSSA CONFIG DA LUNA — CORRETAMENTE DENTRO DO ARRAY
+    // 🔹 Nossa config da Luna
     'luna' => [
         'webhook_token' => env('LUNA_WEBHOOK_TOKEN'),
     ],
