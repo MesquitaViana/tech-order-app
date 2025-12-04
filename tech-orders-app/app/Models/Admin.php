@@ -3,21 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Admin extends Model
+class Admin extends Authenticatable
 {
+    use Notifiable;
+
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    protected $hidden = ['password'];
-
-    public function setPasswordAttribute($value)
-    {
-        // permite passar senha “crua” que ele já faz o hash
-        $this->attributes['password'] = Hash::make($value);
-    }
+    protected $hidden = [
+        'password',
+    ];
 }

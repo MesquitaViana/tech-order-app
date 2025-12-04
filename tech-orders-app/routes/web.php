@@ -9,22 +9,34 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('admin')->group(function () {
-    Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
-    Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
-    Route::post('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+// Route::prefix('admin')->group(function () {
+//     Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+//     Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
+//     Route::post('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+// });
+
+// LOGIN ADMIN - público
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [App\Http\Controllers\Admin\AdminAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [App\Http\Controllers\Admin\AdminAuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [App\Http\Controllers\Admin\AdminAuthController::class, 'logout'])->name('logout');
+});
+
+// ÁREA PROTEGIDA
+Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/orders', [App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\Admin\AdminOrderController::class, 'show'])->name('orders.show');
 });
 
 Route::prefix('minha-conta')->name('customer.')->group(function () {
-    // Login
+    // Rotas públicas
     Route::get('/login', [CustomerAccountController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [CustomerAccountController::class, 'login'])->name('login.post');
 
-    // Logout
     Route::post('/logout', [CustomerAccountController::class, 'logout'])->name('logout');
 
-    // Rotas protegidas
-    Route::group([], function () {
+    // Rotas protegidas por sessão do cliente
+    Route::middleware('customer.auth')->group(function () {
         Route::get('/pedidos', [CustomerAccountController::class, 'orders'])->name('orders');
         Route::get('/pedidos/{id}', [CustomerAccountController::class, 'showOrder'])->name('orders.show');
     });
