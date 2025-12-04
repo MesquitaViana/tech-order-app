@@ -23,8 +23,8 @@ Route::prefix('minha-conta')->name('customer.')->group(function () {
     // Logout
     Route::post('/logout', [CustomerAccountController::class, 'logout'])->name('logout');
 
-    // Rotas protegidas: pedidos
-    Route::middleware('customer.auth')->group(function () {
+    // Rotas protegidas
+    Route::group([], function () {
         Route::get('/pedidos', [CustomerAccountController::class, 'orders'])->name('orders');
         Route::get('/pedidos/{id}', [CustomerAccountController::class, 'showOrder'])->name('orders.show');
     });

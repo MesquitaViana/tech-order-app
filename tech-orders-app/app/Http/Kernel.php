@@ -7,34 +7,19 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * The application's global HTTP middleware stack.
-     *
-     * These middleware are run during every request to your application.
+     * Global HTTP middleware.
      */
     protected $middleware = [
-        // Handles trusted proxies
         \App\Http\Middleware\TrustProxies::class,
-
-        // Handle CORS headers
         \Illuminate\Http\Middleware\HandleCors::class,
-
-        // Prevent requests during maintenance
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
-
-        // Validate post sizes
         \Illuminate\Http\Middleware\ValidatePostSize::class,
-
-        // Trim strings from input
         \App\Http\Middleware\TrimStrings::class,
-
-        // Convert empty strings to null
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
-     * The application's route middleware groups.
-     *
-     * Middleware groups can be applied to groups of routes.
+     * Middleware groups.
      */
     protected $middlewareGroups = [
         'web' => [
@@ -53,9 +38,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware.
-     *
-     * These can be assigned to individual routes.
+     * Route middleware.
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
@@ -70,7 +53,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        // Middleware exclusivo nosso
+        // Nosso middleware customizado para o cliente
         'customer.auth' => \App\Http\Middleware\CustomerAuth::class,
     ];
 }

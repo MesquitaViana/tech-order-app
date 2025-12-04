@@ -13,6 +13,7 @@ class CustomerAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Se não tiver "customer_id" na sessão, redireciona pro login
         if (!$request->session()->has('customer_id')) {
             return redirect()
                 ->route('customer.login')
