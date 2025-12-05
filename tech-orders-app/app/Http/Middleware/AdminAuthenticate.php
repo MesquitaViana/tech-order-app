@@ -8,7 +8,7 @@ class AdminAuthenticate extends Middleware
 {
     protected function redirectTo($request): ?string
     {
-        if (!$request->expectsJson()) {
+        if (! $request->expectsJson()) {
             return route('admin.login');
         }
 

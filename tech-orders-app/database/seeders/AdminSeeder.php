@@ -10,11 +10,11 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        Admin::firstOrCreate(
+        Admin::updateOrCreate(
             ['email' => 'admin@techorders.com'],
             [
                 'name' => 'Administrador',
-                'password' => Hash::make('senha-super-forte-123'),
+                'password' => Hash::make('admin123'), // senha que vamos usar
             ],
         );
     }

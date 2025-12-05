@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Webhook\LunaWebhookController;
 
 // Teste simples pra ver se o api.php está sendo carregado
 Route::get('/ping', function () {
@@ -14,5 +13,12 @@ Route::get('/webhooks/luna', function (Request $request) {
     return response()->json(['status' => 'ok']);
 });
 
-// Webhook real (POST)
-Route::post('/webhooks/luna', [LunaWebhookController::class, 'handle']);
+// Webhook real (POST) – por enquanto só loga e responde 200
+Route::post('/webhooks/luna', function (Request $request) {
+    \Log::info('Webhook Luna recebido', [
+        'headers' => $request->headers->all(),
+        'body'    => $request->all(),
+    ]);
+
+    return response()->json(['ok' => true]);
+});

@@ -63,20 +63,23 @@
     <div class="title">Login Admin</div>
 
     @if($errors->any())
-        <div class="error">{{ $errors->first() }}</div>
+        <div class="error" style="color:#b91c1c; margin-bottom:8px;">
+            {{ $errors->first() }}
+        </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.login.post') }}">
-        @csrf
 
-        <label>E-mail</label>
-        <input type="email" name="email" required autofocus>
+<form method="POST" action="{{ route('admin.login.post') }}">
+    @csrf
 
-        <label>Senha</label>
-        <input type="password" name="password" required>
+    <label>E-mail</label>
+    <input type="email" name="email" required autofocus>
 
-        <button type="submit">Entrar</button>
-    </form>
+    <label>Senha</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Entrar</button>
+</form>
 </div>
 
 </body>
