@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\TrackingHistory;
+
 
 class Order extends Model
 {
@@ -14,6 +16,7 @@ class Order extends Model
         'amount',
         'method',
         'city',
+        'tracking_code',
         'state',
         'zipcode',
         'street',
@@ -21,6 +24,13 @@ class Order extends Model
         'complement',
         'neighborhood',
         'raw_payload',
+        'tracking_terms_accepted_at',
+        'tracking_terms_accepted_ip',
+        'tracking_terms_version',
+        'delivered_at',
+        'delivery_person_name',
+        'delivery_proof_pin',
+        'delivery_proof_url',
     ];
 
     protected $casts = [
@@ -50,4 +60,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderStatusEvent::class);
     }
+
+    public function trackingHistories()
+    {
+        return $this->hasMany(TrackingHistory::class);
+    }
+
 }

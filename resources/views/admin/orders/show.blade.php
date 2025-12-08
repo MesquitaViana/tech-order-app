@@ -196,6 +196,29 @@
             color: #6b7280;
             font-size: 12px;
         }
+
+        /* Helper + botão pequeno (assinatura) */
+        .helper {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .btn-small {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #111827;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-small:hover {
+            background: #000000;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -222,6 +245,7 @@
     </div>
 
     <div class="grid">
+        {{-- COLUNA ESQUERDA --}}
         <div>
             <div class="card">
                 <div class="card-title">Itens do pedido</div>
@@ -258,6 +282,15 @@
 
                 <div class="label">Telefone</div>
                 <div class="value">{{ $order->customer->phone ?? '—' }}</div>
+
+                @if($order->customer)
+                    <p class="helper">
+                        <a href="{{ route('admin.subscriptions.create', ['customer_id' => $order->customer->id]) }}"
+                           class="btn-small">
+                            Registrar assinatura para este cliente
+                        </a>
+                    </p>
+                @endif
             </div>
 
             <div class="card">
@@ -272,7 +305,9 @@
             </div>
         </div>
 
+        {{-- COLUNA DIREITA --}}
         <div>
+            {{-- STATUS DO PEDIDO --}}
             <div class="card">
                 <div class="card-title">Status do pedido</div>
 
@@ -336,6 +371,63 @@
                 </div>
             </div>
 
+            {{-- CARD DE RASTREIO --}}
+            <div class="card">
+                <div class="card-title">Rastreio</div>
+                <div class="label">Código utilizado para acompanhar o envio do pedido.</div>
+
+                <form action="{{ route('admin.orders.updateTracking', $order->id) }}"
+                      method="POST"
+                      style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px;">
+                    @csrf
+                    <input
+                        type="text"
+                        name="tracking_code"
+                        value="{{ old('tracking_code', $order->tracking_code) }}"
+                        placeholder="Ex.: LX123456789BR"
+                        style="flex: 1 1 220px; padding: 8px 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 13px;"
+                    >
+                    <button type="submit"
+                            style="padding: 8px 14px; border-radius: 999px; border:none; background:#111827; color:#ffffff; font-size:13px; font-weight:600; cursor:pointer;">
+                        Salvar rastreio
+                    </button>
+                </form>
+
+                <p style="font-size: 11px; color:#6b7280; margin-top:6px;">
+                    Sempre que você alterar o código de rastreio, registraremos um histórico com o admin responsável e o horário.
+                </p>
+            </div>
+
+            {{-- HISTÓRICO DE RASTREIO --}}
+            @if($order->trackingHistories && $order->trackingHistories->count())
+                <div class="card">
+                    <div class="card-title">Histórico de rastreio</div>
+                    <div class="label">
+                        Todas as alterações realizadas no código de rastreio deste pedido.
+                    </div>
+
+                    <ul class="timeline" style="margin-top:8px;">
+                        @foreach($order->trackingHistories as $history)
+                            <li style="padding:4px 0; border-bottom:1px solid #e5e7eb;">
+                                <strong>{{ optional($history->created_at)->format('d/m/Y H:i') }}</strong>
+                                —
+                                @php
+                                    $adminName = $history->admin?->name ?? 'Admin (excluído)';
+                                @endphp
+                                <span style="color:#6b7280;">{{ $adminName }}</span> alterou:
+                                <span style="color:#6b7280;">
+                                    {{ $history->old_code ?: 'sem código' }} →
+                                </span>
+                                <span style="font-weight:600;">
+                                    {{ $history->new_code ?: 'sem código' }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- HISTÓRICO DE STATUS --}}
             <div class="card">
                 <div class="card-title">Histórico de status</div>
                 @if($order->statusEvents->count())

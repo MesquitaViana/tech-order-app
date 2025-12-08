@@ -121,7 +121,7 @@
         <h1>Entrar na sua conta</h1>
         <p class="subtitle">
             Consulte seus pedidos realizados na <strong>Tech Market Brasil</strong>
-            usando o mesmo e-mail e CPF do checkout.
+            usando o mesmo e-mail e CPF que você informou no checkout.
         </p>
 
         @if ($errors->any())
@@ -153,8 +153,9 @@
                 required
             >
             <div class="helper">
-                Usamos seu CPF apenas para localizar seus pedidos.
-                O número é armazenado de forma protegida (hash), nunca em texto puro.
+                Use o mesmo CPF do momento da compra.
+                Nós usamos o número apenas para localizar seus pedidos
+                e ele é armazenado em formato protegido.
             </div>
 
             <button type="submit">Entrar</button>
@@ -165,5 +166,42 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var cpfInput = document.getElementById('cpf');
+        if (!cpfInput) return;
+
+        // teclado numérico em mobile
+        cpfInput.setAttribute('inputmode', 'numeric');
+
+        cpfInput.addEventListener('input', function (e) {
+            var value = e.target.value || '';
+
+            // remove tudo que não for dígito e limita a 11
+            value = value.replace(/\D/g, '').slice(0, 11);
+
+            // monta a máscara XXX.XXX.XXX-XX
+            if (value.length > 9) {
+                e.target.value =
+                    value.slice(0, 3) + '.' +
+                    value.slice(3, 6) + '.' +
+                    value.slice(6, 9) + '-' +
+                    value.slice(9, 11);
+            } else if (value.length > 6) {
+                e.target.value =
+                    value.slice(0, 3) + '.' +
+                    value.slice(3, 6) + '.' +
+                    value.slice(6);
+            } else if (value.length > 3) {
+                e.target.value =
+                    value.slice(0, 3) + '.' +
+                    value.slice(3);
+            } else {
+                e.target.value = value;
+            }
+        });
+    });
+</script>
 </body>
 </html>

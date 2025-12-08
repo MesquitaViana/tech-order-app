@@ -14,9 +14,9 @@
             max-width: 1100px;
             margin: 32px auto;
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+            padding: 24px 28px 28px;
         }
         .header {
             display: flex;
@@ -25,29 +25,43 @@
             gap: 16px;
             margin-bottom: 16px;
         }
-        .header-title {
+        .title {
             font-size: 20px;
             font-weight: 700;
-            margin: 0;
+            color: #111827;
         }
-        .header-subtitle {
+        .subtitle {
             font-size: 13px;
             color: #6b7280;
             margin-top: 4px;
         }
+        .filters-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+        .filters-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
         .search-box {
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
             align-items: center;
-            margin-top: 8px;
-            flex-wrap: wrap;
         }
         .search-box input[type="text"],
-        .search-box select {
+        .search-box select,
+        .search-box input[type="date"] {
             padding: 8px 10px;
             border-radius: 8px;
             border: 1px solid #d1d5db;
             font-size: 13px;
+            min-width: 140px;
         }
         .search-box button {
             padding: 8px 14px;
@@ -62,6 +76,15 @@
         .search-box button:hover {
             background: #000000;
         }
+        .search-box a.clear-link {
+            font-size: 12px;
+            color: #6b7280;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+        .search-box a.clear-link:hover {
+            text-decoration: underline;
+        }
         .search-hint {
             font-size: 11px;
             color: #6b7280;
@@ -70,171 +93,299 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
+            margin-top: 12px;
         }
         th, td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 8px 10px;
             font-size: 13px;
-            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
             vertical-align: middle;
         }
         th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #6b7280;
             background: #f9fafb;
-            font-weight: 600;
-            color: #374151;
         }
-        tr:hover {
-            background: #f3f4f6;
+        tr:hover td {
+            background: #f9fafb;
+        }
+        .col-id {
+            width: 60px;
+            white-space: nowrap;
+        }
+        .col-external {
+            width: 140px;
+            max-width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .col-customer {
+            max-width: 260px;
+        }
+        .col-customer-name {
+            font-weight: 600;
+            color: #111827;
+        }
+        .col-customer-email {
+            font-size: 11px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .col-amount {
+            width: 110px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .col-date {
+            width: 140px;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .col-actions {
+            width: 80px;
+            text-align: right;
         }
         .badge {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             padding: 2px 8px;
             border-radius: 999px;
             font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
-        .badge-status {
-            background: #eef2ff;
-            color: #3730a3;
+        /* Status interno */
+        .badge-status-novo {
+            background: #eff6ff;
+            color: #1d4ed8;
         }
-        .badge-gateway {
-            background: #ecfdf5;
-            color: #166534;
+        .badge-status-em_separacao {
+            background: #ecfeff;
+            color: #0891b2;
         }
-        .link {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 500;
+        .badge-status-enviado {
+            background: #fef3c7;
+            color: #d97706;
         }
-        .link:hover {
-            text-decoration: underline;
+        .badge-status-entregue {
+            background: #dcfce7;
+            color: #15803d;
         }
-        .pagination {
-            margin-top: 16px;
-            font-size: 13px;
+        .badge-status-cancelado {
+            background: #fee2e2;
+            color: #b91c1c;
         }
-        .logout-form {
-            margin: 0;
+        /* Gateway status */
+        .badge-gateway-paid {
+            background: #dcfce7;
+            color: #15803d;
         }
-        .logout-button {
-            border: none;
-            background: #ef4444;
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 600;
+        .badge-gateway-pending {
+            background: #fef9c3;
+            color: #a16207;
+        }
+        .badge-gateway-canceled,
+        .badge-gateway-refunded {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .badge-gateway-default {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .btn-small {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 6px 10px;
             border-radius: 999px;
-            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #111827;
+            background: #111827;
+            color: #ffffff;
+            text-decoration: none;
         }
-        .logout-button:hover {
-            background: #b91c1c;
+        .btn-small:hover {
+            background: #000000;
         }
-        .empty {
-            font-size: 14px;
+        .pagination-wrapper {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .pagination-summary {
+            font-size: 12px;
             color: #4b5563;
-            padding: 24px 0;
-            text-align: center;
+        }
+        .pagination-links {
+            font-size: 12px;
+        }
+        .top-right {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .top-right a {
+            color: #111827;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .top-right a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-
 <div class="page">
     <div class="header">
         <div>
-            <h1 class="header-title">Pedidos</h1>
-            <div class="header-subtitle">
-                Visualize e gerencie os pedidos recebidos pela Tech Market Brasil.
-            </div>
-
-            <form method="GET" action="{{ route('admin.orders.index') }}" class="search-box">
-                <input
-                    type="text"
-                    name="q"
-                    placeholder="Buscar por e-mail, nome ou ID externo..."
-                    value="{{ $search }}"
-                >
-
-                <select name="status">
-                    <option value="">Status (todos)</option>
-                    @php
-                        $statusOptions = ['novo', 'em_separacao', 'enviado', 'entregue', 'cancelado'];
-                    @endphp
-                    @foreach($statusOptions as $opt)
-                        <option value="{{ $opt }}" @if($status === $opt) selected @endif>
-                            {{ strtoupper(str_replace('_', ' ', $opt)) }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <button type="submit">Filtrar</button>
-            </form>
-
-            <div class="search-hint">
-                Dica: você pode buscar pelo <strong>e-mail do cliente</strong>, <strong>nome</strong> ou
-                <strong>ID externo</strong> da Luna.
+            <div class="title">Pedidos</div>
+            <div class="subtitle">
+                Visão geral dos pedidos integrados pela Luna Checkout para a Tech Market Brasil.
             </div>
         </div>
-
-        <div>
-            <form class="logout-form" method="POST" action="{{ route('admin.logout') }}">
+        <div class="top-right">
+            Painel Tech Orders<br>
+            <a href="{{ route('admin.logout') }}"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Sair do admin
+            </a>
+            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
                 @csrf
-                <button type="submit" class="logout-button">Sair</button>
             </form>
         </div>
     </div>
 
-    @if($orders->count() === 0)
-        <div class="empty">
-            Nenhum pedido encontrado para os filtros informados.
-        </div>
-    @else
+    <div class="filters-card">
+        <div class="filters-title">Filtros de pesquisa</div>
+        <form method="GET" action="{{ route('admin.orders.index') }}">
+            <div class="search-box">
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Buscar por ID, nome, e-mail ou ID externo..."
+                    value="{{ $search }}"
+                >
+
+                <select name="status">
+                    <option value="">Status interno</option>
+                    @foreach($statusOptions as $key => $label)
+                        <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
+                    @endforeach
+                </select>
+
+                <select name="method">
+                    <option value="">Método de pagamento</option>
+                    @foreach($methods as $m)
+                        <option value="{{ $m }}" @selected($method === $m)>{{ strtoupper($m) }}</option>
+                    @endforeach
+                </select>
+
+                <input
+                    type="date"
+                    name="date_from"
+                    value="{{ $dateFrom }}"
+                    placeholder="De"
+                >
+                <input
+                    type="date"
+                    name="date_to"
+                    value="{{ $dateTo }}"
+                    placeholder="Até"
+                >
+
+                <button type="submit">Aplicar filtros</button>
+
+                @if(request()->query())
+                    <a href="{{ route('admin.orders.index') }}" class="clear-link">Limpar filtros</a>
+                @endif
+            </div>
+
+            <div class="search-hint">
+                Dica: combine termos de busca (ex.: nome do cliente + status + intervalo de datas) para refinar a listagem.
+            </div>
+        </form>
+    </div>
+
+    @if($orders->count())
         <table>
             <thead>
-                <tr>
-                    <th>#</th>
-                    <th>ID Externo</th>
-                    <th>Cliente</th>
-                    <th>E-mail</th>
-                    <th>Status interno</th>
-                    <th>Status pagamento</th>
-                    <th>Total</th>
-                    <th>Método</th>
-                    <th>Criado em</th>
-                    <th>Ação</th>
-                </tr>
+            <tr>
+                <th class="col-id">#</th>
+                <th class="col-external">ID Externo (Luna)</th>
+                <th>Cliente</th>
+                <th class="col-amount">Valor</th>
+                <th>Status interno</th>
+                <th>Status gateway</th>
+                <th>Método</th>
+                <th class="col-date">Criado em</th>
+                <th class="col-actions"></th>
+            </tr>
             </thead>
             <tbody>
             @foreach($orders as $order)
+                @php
+                    $statusClass = 'badge-status-' . $order->status;
+                    $gatewayStatus = strtolower($order->gateway_status ?? '');
+                    $gatewayClass = match ($gatewayStatus) {
+                        'paid'      => 'badge-gateway-paid',
+                        'pending'   => 'badge-gateway-pending',
+                        'canceled'  => 'badge-gateway-canceled',
+                        'refunded'  => 'badge-gateway-refunded',
+                        default     => 'badge-gateway-default',
+                    };
+                @endphp
                 <tr>
-                    <td>#{{ $order->id }}</td>
-                    <td>{{ $order->external_id ?? '—' }}</td>
-                    <td>{{ $order->customer->name ?? '—' }}</td>
-                    <td>{{ $order->customer->email ?? '—' }}</td>
+                    <td class="col-id">#{{ $order->id }}</td>
+                    <td class="col-external" title="{{ $order->external_id }}">
+                        {{ $order->external_id }}
+                    </td>
+                    <td class="col-customer">
+                        @if($order->customer)
+                            <div class="col-customer-name">
+                                {{ $order->customer->name }}
+                            </div>
+                            <div class="col-customer-email" title="{{ $order->customer->email }}">
+                                {{ $order->customer->email }}
+                            </div>
+                        @else
+                            <em>Cliente não vinculado</em>
+                        @endif
+                    </td>
+                    <td class="col-amount">
+                        R$ {{ number_format($order->amount, 2, ',', '.') }}
+                    </td>
                     <td>
-                        <span class="badge badge-status">
-                            {{ $order->status ?? '—' }}
+                        <span class="badge {{ $statusClass }}">
+                            {{ strtoupper(str_replace('_', ' ', $order->status)) }}
                         </span>
                     </td>
                     <td>
-                        <span class="badge badge-gateway">
-                            {{ $order->gateway_status ?? '—' }}
+                        <span class="badge {{ $gatewayClass }}">
+                            {{ strtoupper($order->gateway_status ?? '-') }}
                         </span>
                     </td>
                     <td>
-                        @php
-                            // ajusta aqui se amount não for em centavos
-                            $amount = $order->amount ?? 0;
-                        @endphp
-                        R$ {{ number_format($amount / 100, 2, ',', '.') }}
+                        {{ strtoupper($order->method ?? '-') }}
                     </td>
-                    <td>{{ strtoupper($order->method ?? '—') }}</td>
-                    <td>{{ optional($order->created_at)->format('d/m/Y H:i') }}</td>
-                    <td>
-                        <a href="{{ route('admin.orders.show', $order->id) }}" class="link">
-                            Ver detalhes
+                    <td class="col-date">
+                        {{ optional($order->created_at)->format('d/m/Y H:i') }}
+                    </td>
+                    <td class="col-actions">
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-small">
+                            Ver
                         </a>
                     </td>
                 </tr>
@@ -242,11 +393,21 @@
             </tbody>
         </table>
 
-        <div class="pagination">
-            {{ $orders->links() }}
+        <div class="pagination-wrapper">
+            <div class="pagination-summary">
+                Mostrando
+                {{ $orders->firstItem() }}–{{ $orders->lastItem() }}
+                de {{ $orders->total() }} pedidos
+            </div>
+            <div class="pagination-links">
+                {{ $orders->links() }}
+            </div>
         </div>
+    @else
+        <p style="font-size: 13px; color: #6b7280; margin-top: 16px;">
+            Nenhum pedido encontrado com os filtros atuais. Ajuste os filtros ou limpe a pesquisa para ver todos os pedidos.
+        </p>
     @endif
 </div>
-
 </body>
 </html>
