@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Order;
+use Illuminate\Support\Facades\Log;
+use OpenAI\Exceptions\RateLimitException;
 
 class AccountController extends Controller
 {
@@ -14,7 +16,6 @@ class AccountController extends Controller
      */
     public function showLoginForm(Request $request)
     {
-        // Já logado → manda para a lista de pedidos
         if ($request->session()->has('customer_id')) {
             return redirect()->route('customer.orders');
         }
@@ -33,10 +34,9 @@ class AccountController extends Controller
         ]);
 
         $email = $data['email'];
-        $cpf   = preg_replace('/\D/', '', $data['cpf']); // remove . e -
+        $cpf = preg_replace('/\D/', '', $data['cpf']);
         $cpfHash = hash('sha256', $cpf);
 
-        // Procura cliente
         $customer = Customer::where('email', $email)
             ->where('cpf_hash', $cpfHash)
             ->first();
@@ -49,7 +49,6 @@ class AccountController extends Controller
                 ]);
         }
 
-        // Salva sessão
         $request->session()->put('customer_id', $customer->id);
 
         return redirect()->route('customer.orders');
@@ -61,13 +60,11 @@ class AccountController extends Controller
     public function logout(Request $request)
     {
         $request->session()->forget('customer_id');
-
         return redirect()->route('customer.login');
     }
 
     /**
-     * Lista de pedidos do cliente autenticado
-     * + carrega assinaturas para o bloco "Minhas assinaturas"
+     * Lista de pedidos + assinaturas
      */
     public function orders(Request $request)
     {
@@ -77,16 +74,12 @@ class AccountController extends Controller
             return redirect()->route('customer.login');
         }
 
-        // Carrega cliente já com relacionamento de assinaturas
-        $customer = Customer::with('subscriptions')
-            ->findOrFail($customerId);
+        $customer = Customer::with('subscriptions')->findOrFail($customerId);
 
-        // Pedidos do cliente (pode usar paginate se preferir)
         $orders = Order::where('customer_id', $customer->id)
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        // Assinaturas do cliente (se já existirem no banco)
         $subscriptions = $customer->subscriptions()
             ->orderByDesc('created_at')
             ->get();
@@ -99,7 +92,7 @@ class AccountController extends Controller
     }
 
     /**
-     * Mostra o detalhe de um pedido pertencente ao cliente
+     * Detalhe de pedido
      */
     public function showOrder(Request $request, $id)
     {
@@ -111,12 +104,9 @@ class AccountController extends Controller
 
         $customer = Customer::findOrFail($customerId);
 
-        // Só busca o pedido SE pertencer ao cliente
         $order = Order::with([
                 'items',
-                'statusEvents' => function ($q) {
-                    $q->orderByDesc('created_at');
-                }
+                'statusEvents' => fn($q) => $q->orderByDesc('created_at'),
             ])
             ->where('customer_id', $customer->id)
             ->findOrFail($id);
@@ -128,7 +118,7 @@ class AccountController extends Controller
     }
 
     /**
-     * Marca termos de entrega (rastreamento) como aceitos para um pedido
+     * Aceita termos de entrega
      */
     public function acceptTrackingTerms(Request $request, $id)
     {
@@ -142,22 +132,19 @@ class AccountController extends Controller
             ->where('customer_id', $customerId)
             ->firstOrFail();
 
-        // Só faz sentido se tiver código de rastreio
         if (!$order->tracking_code) {
             return redirect()
                 ->route('customer.orders.show', $order->id)
                 ->with('status_error', 'Este pedido ainda não possui código de rastreio.');
         }
 
-        // Se já aceitou, só redireciona
         if ($order->tracking_terms_accepted_at) {
-            return redirect()
-                ->route('customer.orders.show', $order->id);
+            return redirect()->route('customer.orders.show', $order->id);
         }
 
         $order->tracking_terms_accepted_at = now();
         $order->tracking_terms_accepted_ip = $request->ip();
-        $order->tracking_terms_version     = '1.0'; // depois dá pra puxar de config
+        $order->tracking_terms_version     = '1.0';
         $order->save();
 
         return redirect()
@@ -166,8 +153,7 @@ class AccountController extends Controller
     }
 
     /**
-     * (ESBOÇO) Tela inicial do assistente de assinaturas com IA
-     * GET /minha-conta/assinaturas/assistente
+     * GET — Tela do assistente de assinaturas
      */
     public function showSubscriptionAssistant(Request $request)
     {
@@ -177,121 +163,117 @@ class AccountController extends Controller
             return redirect()->route('customer.login');
         }
 
-        $customer = Customer::with(['orders.items'])
-            ->findOrFail($customerId);
-
-        // Últimos pedidos para exibir/usar no assistente
-        $recentOrders = $customer->orders()
-            ->with('items')
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
+        $customer = Customer::findOrFail($customerId);
 
         return view('customer.subscriptions.assistant', [
-            'customer'     => $customer,
-            'recentOrders' => $recentOrders,
+            'customer' => $customer,
+            'aiResult' => null,
+            'aiError'  => null,
         ]);
     }
 
     /**
-     * (ESBOÇO) Processa respostas do questionário e gera recomendações
-     * POST /minha-conta/assinaturas/assistente
-     *
-     * Aqui depois vamos plugar a chamada de IA (API externa).
+     * POST — Processa o texto + chamada IA (responses API)
      */
-public function processSubscriptionAssistant(Request $request)
-{
-    $customerId = $request->session()->get('customer_id');
+    public function processSubscriptionAssistant(Request $request)
+    {
+        $customerId = $request->session()->get('customer_id');
+        if (!$customerId) {
+            return redirect()->route('customer.login');
+        }
 
-    if (!$customerId) {
-        return redirect()->route('customer.login');
-    }
+        $customer = Customer::findOrFail($customerId);
 
-    $customer = Customer::findOrFail($customerId);
+        $data = $request->validate([
+            'preferences_text' => ['required', 'string', 'max:2000'],
+            'budget'           => ['nullable', 'string', 'max:50'],
+        ]);
 
-    $data = $request->validate([
-        'preferences_text' => ['required', 'string', 'max:2000'],
-        'budget'           => ['nullable', 'string', 'max:255'],
-    ]);
+        $orders = Order::with('items')
+            ->where('customer_id', $customer->id)
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get();
 
-    // 1) Histórico de pedidos do cliente (últimos 10)
-    $orders = Order::with('items')
-        ->where('customer_id', $customer->id)
-        ->orderByDesc('created_at')
-        ->limit(10)
-        ->get();
+        $orderHistoryText = $orders->map(function ($order) {
+            $items = $order->items->map(fn($i) => "{$i->product_name} (x{$i->quantity})")
+                ->implode(', ');
 
-    $orderHistoryText = $orders->map(function ($order) {
-        $items = $order->items->map(function ($item) {
-            return "{$item->name} (qty: {$item->quantity})";
-        })->implode(', ');
+            return "Pedido #{$order->id} em {$order->created_at->format('d/m/Y')}: {$items} - total R$ {$order->total}";
+        })->implode("\n");
 
-        return "Pedido #{$order->id} ({$order->created_at->format('d/m/Y')}): {$items} - total R$ {$order->total}";
-    })->implode("\n");
+        $userText = $data['preferences_text'];
+        $budget   = $data['budget'] ?: 'não informado';
 
-    // 2) Preferências e orçamento informados agora
-    $userText = $data['preferences_text'];
-    $budget   = $data['budget'] ?: 'não informado';
+        $prompt = <<<PROMPT
+Você é um assistente de assinaturas da Tech Market Brasil.
 
-    // 3) Prompt para a IA
-    $systemPrompt = <<<PROMPT
-Você é um assistente especialista em pods descartáveis, refis e dispositivos de vaporização.
+Dados do cliente:
+- Nome: {$customer->name}
+- E-mail: {$customer->email}
 
-Tarefas principais:
-- Ler o histórico de pedidos do cliente.
-- Ler o texto que ele escreveu dizendo o que usa hoje, o que gosta e o que procura.
-- Ler o orçamento mensal aproximado.
-- Sugerir de 1 a 3 "Boxes de assinatura" mensais, sempre em português do Brasil.
+Histórico recente (até 10 pedidos):
+{$orderHistoryText}
 
-Importante:
-- Você NÃO conhece o estoque em tempo real, então fale em termos de tipos de produto e faixas de preço (ex.: "2 pods descartáveis de 30k puffs faixa R\$ 90–120 cada").
-- Foque em perfil de uso (frequência, preferência de sabor, tipo de produto).
-- Use um tom simples, claro e amigável.
-- Sempre explique em poucas linhas POR QUE aquela Box faz sentido para o cliente.
+Descrição do cliente:
+"{$userText}"
 
-Formato da resposta:
-- Um pequeno parágrafo de resumo.
-- Depois liste as boxes como:
-  1) Nome da Box
-     - Perfil de uso recomendado
-     - Conteúdo aproximado (tipos de produto)
-     - Faixa de valor estimada por mês
+Orçamento mensal informado: {$budget}
+
+Tarefa:
+Proponha de 1 a 3 Boxes de Assinatura com:
+- Nome da Box
+- Faixa de preço aproximada
+- Quantidade estimada
+- Perfil de sabor
+- Justificativa curta
+
+Formato simples (sem markdown):
+
+1) Nome da Box: ...
+   Preço aproximado: ...
+   Quantidade: ...
+   Perfil de sabor: ...
+   Justificativa: ...
+
+2) ...
 PROMPT;
 
-    // 4) Chamada à IA (exemplo usando OpenAI PHP; adapte se estiver usando outro client)
-    $client = \OpenAI::client(config('services.openai.key')); // ou env('OPENAI_API_KEY')
+        try {
+            $client = \OpenAI::client(config('services.openai.key'));
 
-    $response = $client->chat()->create([
-        'model'    => 'gpt-4.1-mini', // ou outro modelo que você escolher
-        'messages' => [
-            [
-                'role'    => 'system',
-                'content' => $systemPrompt,
-            ],
-            [
-                'role'    => 'user',
-                'content' =>
-                    "Histórico de pedidos do cliente:\n" .
-                    $orderHistoryText .
-                    "\n\nTexto que o cliente escreveu:\n" .
-                    $userText .
-                    "\n\nOrçamento mensal aproximado: " .
-                    $budget,
-            ],
-        ],
-    ]);
+            $response = $client->responses()->create([
+                'model' => config('services.openai.model', 'gpt-4.1-mini'),
+                'input' => $prompt,
+            ]);
 
-    $recommendation = $response->choices[0]->message->content
-        ?? 'Não foi possível gerar uma recomendação agora.';
+            $aiText = trim($response->outputText ?? $response->outputText());
 
-    return view('customer.subscriptions.assistant_result', [
-        'customer'         => $customer,
-        'orders'           => $orders,
-        'preferences_text' => $userText,
-        'budget'           => $budget,
-        'recommendation'   => $recommendation,
-    ]);
-}
+            return view('customer.subscriptions.assistant', [
+                'customer' => $customer,
+                'aiResult' => $aiText,
+                'aiError'  => null,
+            ]);
 
+        } catch (RateLimitException $e) {
 
+            Log::warning('OpenAI rate limit: '.$e->getMessage());
+
+            return view('customer.subscriptions.assistant', [
+                'customer' => $customer,
+                'aiResult' => null,
+                'aiError'  => 'Nosso assistente está recebendo muitas solicitações. Tente novamente em alguns minutos.',
+            ]);
+
+        } catch (\Throwable $e) {
+
+            Log::error('Erro IA: '.$e->getMessage());
+
+            return view('customer.subscriptions.assistant', [
+                'customer' => $customer,
+                'aiResult' => null,
+                'aiError'  => 'Ocorreu um erro ao gerar a recomendação. Tente novamente mais tarde.',
+            ]);
+        }
+    }
 }
