@@ -363,19 +363,15 @@
             <div>
                 <div class="section-title">Endereço de entrega</div>
                 <div class="value">
-                    {{ $order->address_street ?? '' }}
-                    {{ $order->address_number ?? '' }}<br>
-                    {{ $order->address_neighborhood ?? '' }}<br>
-                    {{ $order->address_city ?? '' }} - {{ $order->address_state ?? '' }}<br>
-                    CEP: {{ $order->address_zipcode ?? '' }}
+                    {{ $order->shipping_address_line ?: '-' }}
                 </div>
 
                 <div class="section-title" style="margin-top: 10px;">Resumo do pagamento</div>
                 <div class="label">Valor total</div>
                 <div class="value">
-                    R$
-                    {{ number_format(($order->amount ?? 0) / 100, 2, ',', '.') }}
+                    {{ $order->total_amount_br }}
                 </div>
+
                 <div class="label">Método</div>
                 <div class="value">{{ strtoupper($order->method ?? '—') }}</div>
             </div>
@@ -430,13 +426,6 @@
                     </span>
                 </div>
             @endif
-
-            @if(!$order->delivered_at && !$order->delivery_person_name && !$order->delivery_proof_pin && !$order->delivery_proof_url)
-                <p class="helper">
-                    Seu pedido foi marcado como entregue. Caso não tenha recebido ou precise de mais detalhes,
-                    fale com o suporte informando o número <strong>#{{ $order->id }}</strong>.
-                </p>
-            @endif
         </div>
     @endif
 
@@ -473,34 +462,8 @@
         @endif
     </div>
 
-    {{-- Bloco "Fale com o suporte" --}}
-    <div class="card">
-        <div class="section-title">Fale com o suporte</div>
-        <p class="helper">
-            Ficou com alguma dúvida sobre prazos, rastreio ou pagamento deste pedido?
-        </p>
-        <p class="helper">
-            Entre em contato com o suporte da <strong>Tech Market Brasil</strong> informando
-            o número <strong>#{{ $order->id }}</strong> e o e-mail usado no checkout.
-        </p>
-        <p class="helper">
-            Canais oficiais:
-            <br>
-            • WhatsApp (link disponível no site oficial)<br>
-            • E-mail de atendimento informado nos e-mails de confirmação de pedido
-        </p>
-        {{-- Se tiver link fixo do WhatsApp, substituir abaixo --}}
-        {{-- <p class="helper">
-            Ou clique aqui para falar direto no WhatsApp:
-            <a href="https://wa.me/55XXXXXXXXXXX" target="_blank" class="link">
-                Abrir WhatsApp da Tech Market Brasil
-            </a>
-        </p> --}}
-    </div>
-
 </div>
 
-{{-- JS: só libera o botão ao rolar até o fim do texto --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var content = document.getElementById('tracking-terms-content');
@@ -517,7 +480,6 @@
         }
 
         content.addEventListener('scroll', checkScroll);
-        // caso o texto já caiba inteiro sem scroll
         checkScroll();
     });
 </script>

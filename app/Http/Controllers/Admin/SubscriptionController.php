@@ -70,14 +70,23 @@ class SubscriptionController extends Controller
             ->with('status_message', 'Assinatura criada com sucesso.');
     }
 
-    public function edit($id)
-    {
-        $subscription = Subscription::with('customer')->findOrFail($id);
+            public function edit($id)
+            {
+                $subscription = Subscription::with('customer')->findOrFail($id);
 
-        return view('admin.subscriptions.edit', [
-            'subscription' => $subscription,
-        ]);
-    }
+                $customer = $subscription->customer;
+
+                $lastOrder = $customer
+                    ? $customer->orders()->latest()->first()
+                    : null;
+
+                return view('admin.subscriptions.edit', [
+                    'subscription' => $subscription,
+                    'customer'     => $customer,
+                    'lastOrder'    => $lastOrder,
+                ]);
+            }
+
 
     public function update(Request $request, $id)
     {

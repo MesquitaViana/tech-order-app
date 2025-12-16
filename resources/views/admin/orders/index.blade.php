@@ -282,39 +282,36 @@
                 <select name="status">
                     <option value="">Status interno</option>
                     @foreach($statusOptions as $key => $label)
-                        <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
+                        <option value="{{ $key }}" @selected($status === $key)>
+                            {{ $label }}
+                        </option>
                     @endforeach
                 </select>
 
                 <select name="method">
                     <option value="">Método de pagamento</option>
                     @foreach($methods as $m)
-                        <option value="{{ $m }}" @selected($method === $m)>{{ strtoupper($m) }}</option>
+                        <option value="{{ $m }}" @selected($method === $m)>
+                            {{ strtoupper($m) }}
+                        </option>
                     @endforeach
                 </select>
 
-                <input
-                    type="date"
-                    name="date_from"
-                    value="{{ $dateFrom }}"
-                    placeholder="De"
-                >
-                <input
-                    type="date"
-                    name="date_to"
-                    value="{{ $dateTo }}"
-                    placeholder="Até"
-                >
+                <input type="date" name="date_from" value="{{ $dateFrom }}">
+                <input type="date" name="date_to" value="{{ $dateTo }}">
 
                 <button type="submit">Aplicar filtros</button>
 
                 @if(request()->query())
-                    <a href="{{ route('admin.orders.index') }}" class="clear-link">Limpar filtros</a>
+                    <a href="{{ route('admin.orders.index') }}" class="clear-link">
+                        Limpar filtros
+                    </a>
                 @endif
             </div>
 
             <div class="search-hint">
-                Dica: combine termos de busca (ex.: nome do cliente + status + intervalo de datas) para refinar a listagem.
+                Dica: combine termos de busca (ex.: nome do cliente + status + intervalo de datas)
+                para refinar a listagem.
             </div>
         </form>
     </div>
@@ -349,42 +346,52 @@
                 @endphp
                 <tr>
                     <td class="col-id">#{{ $order->id }}</td>
+
                     <td class="col-external" title="{{ $order->external_id }}">
                         {{ $order->external_id }}
                     </td>
+
                     <td class="col-customer">
                         @if($order->customer)
                             <div class="col-customer-name">
                                 {{ $order->customer->name }}
                             </div>
-                            <div class="col-customer-email" title="{{ $order->customer->email }}">
+                            <div class="col-customer-email"
+                                 title="{{ $order->customer->email }}">
                                 {{ $order->customer->email }}
                             </div>
                         @else
                             <em>Cliente não vinculado</em>
                         @endif
                     </td>
+
                     <td class="col-amount">
-                        R$ {{ number_format($order->amount, 2, ',', '.') }}
+                        {{ $order->total_amount_br }}
                     </td>
+
                     <td>
                         <span class="badge {{ $statusClass }}">
                             {{ strtoupper(str_replace('_', ' ', $order->status)) }}
                         </span>
                     </td>
+
                     <td>
                         <span class="badge {{ $gatewayClass }}">
                             {{ strtoupper($order->gateway_status ?? '-') }}
                         </span>
                     </td>
+
                     <td>
-                        {{ strtoupper($order->method ?? '-') }}
+                        {{ strtoupper($order->payment_method_label) }}
                     </td>
+
                     <td class="col-date">
                         {{ optional($order->created_at)->format('d/m/Y H:i') }}
                     </td>
+
                     <td class="col-actions">
-                        <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-small">
+                        <a href="{{ route('admin.orders.show', $order->id) }}"
+                           class="btn-small">
                             Ver
                         </a>
                     </td>
@@ -399,13 +406,15 @@
                 {{ $orders->firstItem() }}–{{ $orders->lastItem() }}
                 de {{ $orders->total() }} pedidos
             </div>
+
             <div class="pagination-links">
                 {{ $orders->links() }}
             </div>
         </div>
     @else
         <p style="font-size: 13px; color: #6b7280; margin-top: 16px;">
-            Nenhum pedido encontrado com os filtros atuais. Ajuste os filtros ou limpe a pesquisa para ver todos os pedidos.
+            Nenhum pedido encontrado com os filtros atuais.
+            Ajuste os filtros ou limpe a pesquisa para ver todos os pedidos.
         </p>
     @endif
 </div>
