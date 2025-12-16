@@ -358,11 +358,7 @@
             <div class="card">
                 <div class="card-title">Endereço de entrega</div>
                 <div class="value">
-                    {{ $order->address_street ?? '' }}
-                    {{ $order->address_number ?? '' }}<br>
-                    {{ $order->address_neighborhood ?? '' }}<br>
-                    {{ $order->address_city ?? '' }} - {{ $order->address_state ?? '' }}<br>
-                    CEP: {{ $order->address_zipcode ?? '' }}
+                    {{ $order->shipping_address_line ?: '-' }}
                 </div>
             </div>
         </div>
@@ -372,6 +368,12 @@
             {{-- STATUS DO PEDIDO --}}
             <div class="card">
                 <div class="card-title">Status do pedido</div>
+
+                {{-- ✅ VALOR (ADICIONADO) --}}
+                <div class="label" style="margin-top: 8px;">Valor total</div>
+                <div class="value">
+                    {{ $order->total_amount_br }}
+                </div>
 
                 @if(session('status_message'))
                     <p class="status-success">

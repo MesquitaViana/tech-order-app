@@ -217,9 +217,10 @@
                     <tr>
                         <td>#{{ $order->id }}</td>
                         <td>{{ optional($order->created_at)->format('d/m/Y H:i') }}</td>
-                        <td>
-                            R{{ number_format($order->amount ?? 0, 2, ',', '.') }}
-                        </td>
+
+                        {{-- ✅ CORRIGIDO: usa accessor total_amount_br --}}
+                        <td>{{ $order->total_amount_br }}</td>
+
                         <td>
                             <span class="badge badge-status">
                                 {{ strtoupper(str_replace('_', ' ', $order->status ?? '—')) }}
