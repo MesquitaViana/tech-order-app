@@ -18,12 +18,18 @@ Route::get('/', function () {
 */
 
 Route::prefix('minha-conta')->name('customer.')->group(function () {
+
     // Login
-    Route::get('/login', [CustomerAccountController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [CustomerAccountController::class, 'login'])->name('login.post');
+    Route::get('/login', [CustomerAccountController::class, 'showLoginForm'])
+        ->name('login');
+
+    Route::post('/login', [CustomerAccountController::class, 'login'])
+        ->middleware('throttle:customer-login')
+        ->name('login.post');
 
     // Logout
-    Route::post('/logout', [CustomerAccountController::class, 'logout'])->name('logout');
+    Route::post('/logout', [CustomerAccountController::class, 'logout'])
+        ->name('logout');
 
     // Rotas protegidas pelo middleware do cliente
     Route::middleware('customer.auth')->group(function () {
@@ -44,7 +50,6 @@ Route::prefix('minha-conta')->name('customer.')->group(function () {
         /**
          * Minhas Assinaturas
          */
-        // Tela principal de assinaturas
         Route::get('/assinaturas', [CustomerAccountController::class, 'subscriptions'])
             ->name('subscriptions');
 
@@ -70,27 +75,48 @@ Route::prefix('minha-conta')->name('customer.')->group(function () {
 
 // LOGIN ADMIN – público
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])
+        ->name('login');
+
+    Route::post('/login', [AdminAuthController::class, 'login'])
+        ->middleware('throttle:admin-login')
+        ->name('login.post');
 });
 
 // ÁREA ADMIN protegida
 Route::middleware('admin.auth:admin')->prefix('admin')->name('admin.')->group(function () {
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    Route::post('/logout', [AdminAuthController::class, 'logout'])
+        ->name('logout');
 
     // Pedidos
-    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
-    Route::post('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::get('/orders', [AdminOrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{id}', [AdminOrderController::class, 'show'])
+        ->name('orders.show');
+
+    Route::post('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])
+        ->name('orders.updateStatus');
 
     // Atualizar código de rastreio
     Route::post('/orders/{id}/tracking', [AdminOrderController::class, 'updateTracking'])
         ->name('orders.updateTracking');
 
     // Assinaturas (Painel Admin)
-    Route::get('/subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');
-    Route::get('/subscriptions/create', [AdminSubscriptionController::class, 'create'])->name('subscriptions.create');
-    Route::post('/subscriptions', [AdminSubscriptionController::class, 'store'])->name('subscriptions.store');
-    Route::get('/subscriptions/{id}/edit', [AdminSubscriptionController::class, 'edit'])->name('subscriptions.edit');
-    Route::post('/subscriptions/{id}', [AdminSubscriptionController::class, 'update'])->name('subscriptions.update');
+    Route::get('/subscriptions', [AdminSubscriptionController::class, 'index'])
+        ->name('subscriptions.index');
+
+    Route::get('/subscriptions/create', [AdminSubscriptionController::class, 'create'])
+        ->name('subscriptions.create');
+
+    Route::post('/subscriptions', [AdminSubscriptionController::class, 'store'])
+        ->name('subscriptions.store');
+
+    Route::get('/subscriptions/{id}/edit', [AdminSubscriptionController::class, 'edit'])
+        ->name('subscriptions.edit');
+
+    Route::post('/subscriptions/{id}', [AdminSubscriptionController::class, 'update'])
+        ->name('subscriptions.update');
 });

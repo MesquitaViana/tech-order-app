@@ -272,26 +272,88 @@
                 </table>
             </div>
 
-            <div class="card">
-                <div class="card-title">Cliente</div>
-                <div class="label">Nome</div>
-                <div class="value">{{ $order->customer->name ?? '—' }}</div>
+        <div class="card">
+    <div class="card-title">Cliente</div>
 
-                <div class="label">E-mail</div>
-                <div class="value">{{ $order->customer->email ?? '—' }}</div>
+    <div class="label">Nome</div>
+    <div class="value">{{ $order->customer->name ?? '—' }}</div>
 
-                <div class="label">Telefone</div>
-                <div class="value">{{ $order->customer->phone ?? '—' }}</div>
+    <div class="label">E-mail</div>
+    <div class="value">{{ $order->customer->email ?? '—' }}</div>
 
-                @if($order->customer)
-                    <p class="helper">
-                        <a href="{{ route('admin.subscriptions.create', ['customer_id' => $order->customer->id]) }}"
-                           class="btn-small">
-                            Registrar assinatura para este cliente
-                        </a>
-                    </p>
-                @endif
+    <div class="label">Telefone</div>
+    <div class="value">{{ $order->customer->phone ?? '—' }}</div>
+
+    @if ($order->customer)
+    <p class="helper">
+        <a href="{{ route('admin.subscriptions.create', ['customer_id' => $order->customer->id]) }}"
+           class="btn-small">
+            Registrar assinatura para este cliente
+        </a>
+    </p>
+
+    {{-- ⭐ BLOCO: ASSINATURAS DO CLIENTE --}}
+    <div style="margin-top:14px;">
+        <div style="font-weight:800; margin-bottom:8px;">Assinaturas do cliente</div>
+
+        @php
+            $subs = $order->customer->subscriptions ?? collect();
+        @endphp
+
+        @if ($subs->isEmpty())
+            <div style="font-size:13px; color:#6b7280;">
+                Este cliente ainda não tem assinaturas cadastradas.
             </div>
+        @else
+            @foreach ($subs as $sub)
+                @php
+                    $st = $sub->status ?? '—';
+                    $bg = $st === 'ativa' ? '#ecfdf5' : ($st === 'pausada' ? '#fffbeb' : '#fef2f2');
+                    $bd = $st === 'ativa' ? '#a7f3d0' : ($st === 'pausada' ? '#fde68a' : '#fecaca');
+                    $tx = $st === 'ativa' ? '#065f46' : ($st === 'pausada' ? '#92400e' : '#b91c1c');
+                    $next = $sub->next_delivery_date
+                        ? \Illuminate\Support\Carbon::parse($sub->next_delivery_date)->format('d/m/Y')
+                        : '—';
+                @endphp
+
+                <div style="border:1px solid #e5e7eb; border-radius:10px; padding:10px; background:#fff; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+                        <div>
+                            <div style="font-weight:800; color:#111827;">
+                                {{ $sub->product_name }}
+                                @if($sub->flavor)
+                                    <span style="font-weight:600; color:#6b7280;">· {{ $sub->flavor }}</span>
+                                @endif
+                            </div>
+
+                            <div style="font-size:13px; color:#374151; margin-top:6px;">
+                                Qtd: <strong>{{ $sub->quantity }}</strong>
+                                · Frequência: <strong>{{ $sub->frequency }}</strong>
+                                · Próxima: <strong>{{ $next }}</strong>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+                            <span style="padding:5px 10px; border-radius:999px; font-size:12px; font-weight:900; border:1px solid {{ $bd }}; background:{{ $bg }}; color:{{ $tx }};">
+                                {{ $st }}
+                            </span>
+
+                            <a href="{{ route('admin.subscriptions.edit', $sub->id) }}"
+                               style="text-decoration:none; font-size:13px; font-weight:800; color:#2563eb;">
+                                Editar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @endif
+    </div>
+    {{-- ⭐ FIM --}}
+@endif
+
+</div>
+
+
 
             <div class="card">
                 <div class="card-title">Endereço de entrega</div>
