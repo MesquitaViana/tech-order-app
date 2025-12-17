@@ -4,148 +4,228 @@
     <meta charset="UTF-8">
     <title>Meus pedidos - Tech Market Brasil</title>
     <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #f3f4f6;
-            margin: 0;
-            padding: 0;
-        }
-        .page {
-            max-width: 1100px;
-            margin: 32px auto;
-            padding: 0 16px;
-        }
-        .card {
-            background: #ffffff;
-            border-radius: 14px;
-            box-shadow: 0 12px 40px rgba(15,23,42,0.10);
-            padding: 20px 20px 18px;
-            margin-bottom: 16px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 10px;
-        }
-        .title {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-        .customer-name {
-            font-weight: 600;
-            color: #111827;
-        }
-        .logout-form {
-            margin: 0;
-        }
-        .logout-button {
-            border: none;
-            background: #111827;
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 7px 12px;
-            border-radius: 999px;
-            cursor: pointer;
-        }
-        .logout-button:hover {
-            background: #000000;
-        }
+    :root {
+        --tech-navy: #070c2b;
+        --tech-navy-soft: #0b123d;
+        --tech-green: #8bc34a;
+        --tech-green-dark: #6ea92f;
+        --tech-gray: #6b7280;
+        --tech-border: #e5e7eb;
+        --tech-bg: #f4f6fb;
+        --white: #ffffff;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 14px;
+    body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--tech-bg);
+        margin: 0;
+        padding: 0;
+        color: #111827;
+    }
+
+    .page {
+        max-width: 1100px;
+        margin: 32px auto;
+        padding: 0 16px;
+    }
+
+    .card {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(7,12,43,0.12);
+        padding: 24px;
+        margin-bottom: 22px;
+    }
+
+    /* HEADER */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 0;
+        color: var(--tech-navy);
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: var(--tech-gray);
+        margin-top: 6px;
+        line-height: 1.4;
+    }
+
+    .customer-name {
+        font-weight: 700;
+        color: var(--tech-navy);
+    }
+
+    /* LOGOUT */
+    .logout-button {
+        border: none;
+        background: var(--tech-navy);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+    .logout-button:hover {
+        background: #000000;
+    }
+
+    /* TABLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--tech-border);
+        font-size: 14px;
+        text-align: left;
+    }
+
+    th {
+        background: #f9fafb;
+        color: var(--tech-navy);
+        font-weight: 700;
+    }
+
+    tr:hover {
+        background: #f5f7ff;
+    }
+
+    /* BADGES */
+    .badge {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+    }
+
+    .badge-status {
+        background: rgba(7,12,43,.08);
+        color: var(--tech-navy);
+    }
+
+    .badge-paid {
+        background: rgba(139,195,74,.15);
+        color: var(--tech-green-dark);
+    }
+
+    .badge-pending {
+        background: rgba(234,179,8,.18);
+        color: #854d0e;
+    }
+
+    .badge-canceled {
+        background: rgba(239,68,68,.15);
+        color: #b91c1c;
+    }
+
+    /* LINKS */
+    .link {
+        color: var(--tech-navy);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .link:hover {
+        text-decoration: underline;
+    }
+
+    /* EMPTY STATE */
+    .empty {
+        font-size: 15px;
+        color: var(--tech-gray);
+        padding: 22px 0;
+    }
+
+    .empty small {
+        display: block;
+        font-size: 13px;
+        color: #9ca3af;
+        margin-top: 6px;
+    }
+
+    /* SECTION */
+    .section-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: var(--tech-navy);
+    }
+
+    .helper {
+        font-size: 14px;
+        color: var(--tech-gray);
+        margin-top: 14px;
+        line-height: 1.5;
+    }
+
+    /* CARD IA */
+    .card-ia {
+        background: linear-gradient(135deg, var(--tech-navy), var(--tech-navy-soft));
+        color: #fff;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 20px 60px rgba(7,12,43,0.35);
+    }
+
+    .card-ia h2 {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 0 0 10px;
+    }
+
+    .card-ia p {
+        font-size: 15px;
+        color: #dbeafe;
+        margin-bottom: 18px;
+        max-width: 680px;
+    }
+
+    .card-ia a {
+        display: inline-block;
+        padding: 12px 22px;
+        background: var(--tech-green);
+        color: #111827;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .card-ia a:hover {
+        background: var(--tech-green-dark);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            flex-direction: column;
         }
         th, td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #e5e7eb;
             font-size: 13px;
-            text-align: left;
         }
-        th {
-            background: #f9fafb;
-            color: #374151;
-            font-weight: 600;
-        }
-        tr:hover {
-            background: #f3f4f6;
-        }
+    }
+</style>
 
-        .badge {
-            display: inline-flex;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-status {
-            background: #eef2ff;
-            color: #3730a3;
-        }
-        .badge-paid {
-            background: #ecfdf5;
-            color: #166534;
-        }
-        .badge-pending {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-        .badge-canceled {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        .link {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .link:hover {
-            text-decoration: underline;
-        }
-        .empty {
-            font-size: 14px;
-            color: #4b5563;
-            padding: 18px 0 6px;
-        }
-        .empty small {
-            display: block;
-            font-size: 12px;
-            color: #9ca3af;
-            margin-top: 4px;
-        }
-
-        /* Assinaturas */
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            color: #111827;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 14px;
-        }
-        .table th, .table td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 13px;
-        }
-        .helper {
-            font-size: 13px;
-            color: #4b5563;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
 <div class="page">

@@ -4,232 +4,294 @@
     <meta charset="UTF-8">
     <title>Pedido #{{ $order->id }} - Tech Market Brasil</title>
     <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #f3f4f6;
-            margin: 0;
-            padding: 0;
-        }
-        .page {
-            max-width: 1100px;
-            margin: 32px auto;
-            padding: 0 16px;
-        }
-        .card {
-            background: #ffffff;
-            border-radius: 14px;
-            box-shadow: 0 12px 40px rgba(15,23,42,0.10);
-            padding: 20px 20px 18px;
-            margin-bottom: 16px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 10px;
-        }
-        .title {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-        .back-link {
-            font-size: 13px;
-            color: #2563eb;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 6px;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        .badge {
-            display: inline-flex;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-status {
-            background: #eef2ff;
-            color: #3730a3;
-        }
-        .badge-paid {
-            background: #ecfdf5;
-            color: #166534;
-        }
-        .badge-pending {
-            background: #fef9c3;
-            color: #92400e;
-        }
-        .badge-canceled {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 2fr 1.2fr;
-            gap: 16px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-        }
-        th, td {
-            padding: 6px 4px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 13px;
-            text-align: left;
-        }
-        th {
-            background: #f9fafb;
-            color: #374151;
-            font-weight: 600;
-        }
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #374151;
-        }
-        .label {
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 3px;
-        }
-        .value {
-            font-size: 13px;
-            color: #111827;
-            margin-bottom: 4px;
-        }
-        ul.timeline {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-        }
-        ul.timeline li {
-            position: relative;
-            padding-left: 18px;
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: #374151;
-        }
-        ul.timeline li::before {
-            content: "";
-            position: absolute;
-            left: 4px;
-            top: 4px;
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            background: #16a34a;
-        }
-        ul.timeline li span {
-            display: block;
-            font-size: 11px;
-            color: #9ca3af;
-        }
-        .helper {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 6px;
-        }
-        .link {
-            font-size: 13px;
-            color: #2563eb;
-            text-decoration: none;
-        }
-        .link:hover {
-            text-decoration: underline;
-        }
+    :root {
+        --tech-navy: #070c2b;
+        --tech-navy-soft: #0b123d;
+        --tech-green: #8bc34a;
+        --tech-green-dark: #6ea92f;
+        --tech-gray: #6b7280;
+        --tech-border: #e5e7eb;
+        --tech-bg: #f4f6fb;
+        --white: #ffffff;
+    }
 
-        /* ===== CSS DO MODAL DE TERMOS DE ENTREGA ===== */
-        .tracking-terms-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.65);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
+    body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--tech-bg);
+        margin: 0;
+        padding: 0;
+        color: #111827;
+    }
+
+    .page {
+        max-width: 1100px;
+        margin: 32px auto;
+        padding: 0 16px;
+    }
+
+    .card {
+        background: var(--white);
+        border-radius: 18px;
+        box-shadow: 0 20px 50px rgba(7,12,43,0.12);
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    /* HEADER */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 4px 0 0;
+        color: var(--tech-navy);
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: var(--tech-gray);
+        margin-top: 8px;
+        line-height: 1.5;
+    }
+
+    .back-link {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--tech-navy);
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    /* LOGOUT */
+    .header button {
+        border: none;
+        background: var(--tech-navy);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 999px;
+        cursor: pointer;
+    }
+
+    /* BADGES */
+    .badge {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+    }
+
+    .badge-status {
+        background: rgba(7,12,43,.08);
+        color: var(--tech-navy);
+    }
+
+    .badge-paid {
+        background: rgba(139,195,74,.18);
+        color: var(--tech-green-dark);
+    }
+
+    .badge-pending {
+        background: rgba(234,179,8,.2);
+        color: #854d0e;
+    }
+
+    .badge-canceled {
+        background: rgba(239,68,68,.18);
+        color: #b91c1c;
+    }
+
+    /* GRID */
+    .grid {
+        display: grid;
+        grid-template-columns: 2fr 1.2fr;
+        gap: 24px;
+    }
+
+    /* TABLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--tech-border);
+        font-size: 14px;
+    }
+
+    th {
+        background: #f9fafb;
+        color: var(--tech-navy);
+        font-weight: 800;
+    }
+
+    tr:hover {
+        background: #f5f7ff;
+    }
+
+    /* TEXT BLOCKS */
+    .section-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--tech-navy);
+        margin-bottom: 8px;
+    }
+
+    .label {
+        font-size: 12px;
+        color: var(--tech-gray);
+        margin-top: 10px;
+    }
+
+    .value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        margin-top: 2px;
+    }
+
+    /* TIMELINE */
+    ul.timeline {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    ul.timeline li {
+        position: relative;
+        padding-left: 22px;
+        margin-bottom: 14px;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    ul.timeline li::before {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 6px;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--tech-green);
+    }
+
+    ul.timeline li span {
+        display: block;
+        font-size: 12px;
+        color: var(--tech-gray);
+        margin-top: 4px;
+    }
+
+    /* LINKS */
+    .link {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--tech-navy);
+        text-decoration: none;
+    }
+
+    .link:hover {
+        text-decoration: underline;
+    }
+
+    /* MODAL TERMOS */
+    .tracking-terms-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(7,12,43,.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .tracking-terms-modal {
+        max-width: 560px;
+        width: 100%;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 30px 70px rgba(7,12,43,.45);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        max-height: 80vh;
+    }
+
+    .tracking-terms-header h2 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 14px;
+        color: var(--tech-navy);
+    }
+
+    .tracking-terms-content {
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid var(--tech-border);
+        background: #f9fafb;
+        font-size: 14px;
+        color: #374151;
+        overflow-y: auto;
+        max-height: 40vh;
+        line-height: 1.6;
+    }
+
+    .tracking-terms-actions {
+        margin-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    #tracking-terms-accept-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: not-allowed;
+        background: #9ca3af;
+        color: #f9fafb;
+    }
+
+    #tracking-terms-accept-btn.enabled {
+        cursor: pointer;
+        background: var(--tech-navy);
+    }
+
+    #tracking-terms-accept-btn.enabled:hover {
+        background: #000;
+    }
+
+    .tracking-terms-helper {
+        font-size: 12px;
+        color: var(--tech-gray);
+        text-align: center;
+    }
+
+    @media (max-width: 900px) {
+        .grid {
+            grid-template-columns: 1fr;
         }
-        .tracking-terms-modal {
-            max-width: 560px;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 18px;
-            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
-            padding: 20px 22px 18px;
-            display: flex;
-            flex-direction: column;
-            max-height: 80vh;
-        }
-        .tracking-terms-header h2 {
-            font-size: 18px;
-            margin: 0 0 12px;
-            color: #111827;
-        }
-        .tracking-terms-content {
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            background: #f9fafb;
-            font-size: 13px;
-            color: #374151;
-            overflow-y: auto;
-            max-height: 40vh;
-        }
-        .tracking-terms-content p {
-            margin: 0 0 10px;
-            line-height: 1.5;
-        }
-        .tracking-terms-content a {
-            color: #111827;
-            font-weight: 600;
-            text-decoration: none;
-        }
-        .tracking-terms-content a:hover {
-            text-decoration: underline;
-        }
-        .tracking-terms-actions {
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 6px;
-        }
-        #tracking-terms-accept-btn {
-            border: none;
-            border-radius: 999px;
-            padding: 9px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: not-allowed;
-            background: #9ca3af;
-            color: #f9fafb;
-            transition: background 0.15s ease;
-        }
-        #tracking-terms-accept-btn.enabled {
-            cursor: pointer;
-            background: #111827;
-        }
-        #tracking-terms-accept-btn.enabled:hover {
-            background: #000000;
-        }
-        .tracking-terms-helper {
-            font-size: 11px;
-            color: #6b7280;
-            margin: 0;
-        }
-        /* ===== FIM CSS MODAL ===== */
-    </style>
+    }
+</style>
+
 </head>
 <body>
 <div class="page">
