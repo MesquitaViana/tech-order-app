@@ -4,129 +4,213 @@
     <meta charset="UTF-8">
     <title>Criar Assinatura - Painel Admin | Tech Orders</title>
     <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #f3f4f6;
-            margin: 0;
-            padding: 0;
-        }
-        .page {
-            max-width: 1100px;
-            margin: 32px auto;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            padding: 24px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        .header-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
-        }
-        .header-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-        .back-link {
-            font-size: 13px;
-            color: #2563eb;
-            text-decoration: none;
-        }
-        .back-link:hover { text-decoration: underline; }
+    :root {
+        --tech-navy: #070c2b;
+        --tech-navy-soft: #0b123d;
+        --tech-green: #8bc34a;
+        --tech-green-dark: #6ea92f;
+        --tech-red: #ef4444;
+        --tech-gray: #6b7280;
+        --tech-border: #e5e7eb;
+        --tech-bg: #f4f6fb;
+        --white: #ffffff;
+    }
 
-        .actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .logout-link {
-            font-size: 13px;
-            color: #ef4444;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .logout-link:hover { text-decoration: underline; }
+    body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--tech-bg);
+        margin: 0;
+        padding: 0;
+        color: #111827;
+    }
 
-        .card {
-            background: #f9fafb;
-            border-radius: 10px;
-            padding: 16px;
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #374151;
-        }
+    .page {
+        max-width: 1100px;
+        margin: 32px auto;
+        background: var(--white);
+        border-radius: 18px;
+        box-shadow: 0 20px 50px rgba(7,12,43,0.12);
+        padding: 28px;
+    }
+
+    /* HEADER */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .header-title {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 0;
+        color: var(--tech-navy);
+    }
+
+    .header-subtitle {
+        font-size: 14px;
+        color: var(--tech-gray);
+        margin-top: 6px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+    }
+
+    .back-link {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--tech-navy);
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .logout-link {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--tech-red);
+        text-decoration: none;
+    }
+
+    .logout-link:hover {
+        text-decoration: underline;
+    }
+
+    /* CARD */
+    .card {
+        background: #f9fafb;
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--tech-border);
+    }
+
+    .card-title {
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 14px;
+        color: var(--tech-navy);
+    }
+
+    /* GRID */
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 16px;
+    }
+
+    .grid-full {
+        grid-column: 1 / -1;
+    }
+
+    /* FORM */
+    label {
+        display: block;
+        font-size: 13px;
+        color: #374151;
+        margin-bottom: 6px;
+        font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        font-size: 14px;
+        background: #ffffff;
+        outline: none;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: var(--tech-navy);
+        box-shadow: 0 0 0 2px rgba(7,12,43,.12);
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    /* CUSTOMER BOX */
+    .customer-box {
+        background: var(--white);
+        border: 1px solid var(--tech-border);
+        border-radius: 12px;
+        padding: 14px;
+    }
+
+    .customer-name {
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .customer-email {
+        font-size: 13px;
+        color: var(--tech-gray);
+        margin-top: 4px;
+    }
+
+    /* ERROR */
+    .error-box {
+        background: rgba(239,68,68,.08);
+        border: 1px solid rgba(239,68,68,.3);
+        color: #b91c1c;
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    /* BUTTON */
+    .footer-actions {
+        margin-top: 18px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        border: none;
+        background: var(--tech-navy);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        padding: 12px 22px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background .15s ease, transform .1s ease;
+    }
+
+    .btn:hover {
+        background: #000000;
+        transform: translateY(-1px);
+    }
+
+    /* HELPERS */
+    .muted {
+        font-size: 13px;
+        color: var(--tech-gray);
+        margin-top: 6px;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
         .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: 1fr;
         }
-        .grid-full { grid-column: 1 / -1; }
-        label {
-            display: block;
-            font-size: 12px;
-            color: #374151;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 9px 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 13px;
-            background: #ffffff;
-        }
-        textarea { resize: vertical; }
-        .error-box {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-        .btn {
-            border: none;
-            background: #111827;
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 700;
-            padding: 10px 14px;
-            border-radius: 999px;
-            cursor: pointer;
-        }
-        .btn:hover { background: #0b1220; }
-        .muted {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 6px;
-        }
-        .customer-box {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 12px;
-        }
-        .customer-name { font-weight: 700; color: #111827; }
-        .customer-email { font-size: 12px; color: #6b7280; margin-top: 4px; }
-        .footer-actions {
-            margin-top: 14px;
-            display: flex;
-            justify-content: flex-end;
-        }
-    </style>
+    }
+</style>
+
 </head>
 <body>
 <div class="page">

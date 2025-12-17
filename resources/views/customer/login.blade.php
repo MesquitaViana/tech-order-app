@@ -4,115 +4,159 @@
     <meta charset="UTF-8">
     <title>Minha Conta - Tech Market Brasil</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: linear-gradient(135deg, #0f172a, #020617);
-            margin: 0;
-            padding: 0;
-            color: #111827;
-        }
-        .wrapper {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
+    :root {
+        --tech-navy: #070c2b;
+        --tech-navy-soft: #0b123d;
+        --tech-green: #8bc34a;
+        --tech-green-dark: #6ea92f;
+        --tech-gray: #6b7280;
+        --tech-border: #e5e7eb;
+        --tech-bg: #f4f6fb;
+        --white: #ffffff;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, var(--tech-navy), #020617);
+        margin: 0;
+        padding: 0;
+        color: #111827;
+    }
+
+    .wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+
+    .card {
+        background: var(--white);
+        border-radius: 22px;
+        box-shadow: 0 30px 80px rgba(7,12,43,0.55);
+        max-width: 420px;
+        width: 100%;
+        padding: 28px 28px 24px;
+    }
+
+    /* LOGO */
+    .logo {
+        font-weight: 900;
+        font-size: 18px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--tech-navy);
+        margin-bottom: 8px;
+    }
+
+    .logo span {
+        color: var(--tech-green);
+    }
+
+    h1 {
+        margin: 0 0 10px;
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--tech-navy);
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: var(--tech-gray);
+        margin-bottom: 18px;
+        line-height: 1.5;
+    }
+
+    /* FORM */
+    label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    input {
+        width: 100%;
+        padding: 11px 12px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        outline: none;
+        background: #ffffff;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    input:focus {
+        border-color: var(--tech-navy);
+        box-shadow: 0 0 0 2px rgba(7,12,43,.12);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 999px;
+        border: none;
+        background: var(--tech-navy);
+        color: #ffffff;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: 800;
+        margin-top: 6px;
+        transition: background .15s ease, transform .1s ease;
+    }
+
+    button:hover {
+        background: #000000;
+        transform: translateY(-1px);
+    }
+
+    /* ALERTAS */
+    .error {
+        color: #b91c1c;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .alert {
+        background: rgba(239,68,68,.1);
+        color: #b91c1c;
+        padding: 10px 12px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .helper {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: -4px;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+
+    .footnote {
+        margin-top: 14px;
+        font-size: 12px;
+        color: #9ca3af;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 480px) {
         .card {
-            background: #f9fafb;
-            border-radius: 18px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-            max-width: 420px;
-            width: 100%;
-            padding: 24px 24px 20px;
+            padding: 22px;
         }
-        .logo {
-            font-weight: 800;
-            font-size: 18px;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            color: #020617;
-            margin-bottom: 6px;
-        }
-        .logo span {
-            color: #16a34a;
-        }
-        h1 {
-            margin: 0 0 8px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #020617;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-        }
-        input {
-            width: 100%;
-            padding: 9px 11px;
-            margin-bottom: 10px;
-            border-radius: 9px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
-            outline: none;
-            background: #ffffff;
-        }
-        input:focus {
-            border-color: #111827;
-            box-shadow: 0 0 0 1px #11182711;
-        }
-        button {
-            width: 100%;
-            padding: 11px 12px;
-            border-radius: 999px;
-            border: none;
-            background: #111827;
-            color: #fff;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-        button:hover {
-            background: #000000;
-        }
-        .error {
-            color: #b91c1c;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-        .alert {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        .helper {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: -4px;
-            margin-bottom: 8px;
-        }
-        .footnote {
-            margin-top: 10px;
-            font-size: 11px;
-            color: #9ca3af;
-            text-align: center;
-        }
-    </style>
+    }
+</style>
+
 </head>
 <body>
 <div class="wrapper">
