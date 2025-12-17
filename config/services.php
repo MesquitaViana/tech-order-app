@@ -41,5 +41,12 @@ return [
     'model' => env('OPENAI_MODEL', 'gpt-4.1-mini'),
     ],
 
+    'brevo' => [
+    'enabled'      => env('BREVO_ENABLED', false),
+    'api_key'      => env('BREVO_API_KEY'),
+    'base_url'     => env('BREVO_BASE_URL', 'https://api.brevo.com/v3'),
+    'sender_name'  => env('BREVO_SENDER_NAME', config('app.name')),
+    'sender_email' => env('BREVO_SENDER_EMAIL'),
+    ],
 
 ];

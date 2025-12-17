@@ -349,7 +349,7 @@
 
                 @php
                     $gatewayStatusRaw = strtolower($order->gateway_status ?? '');
-                    $gatewayBadgeClass = 'badge-paid';
+                    $gatewayBadgeClass = 'badge-pending';
                     $gatewayLabel = null;
 
                     switch ($gatewayStatusRaw) {
@@ -414,8 +414,10 @@
                         <tr>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->quantity }}</td>
-                            <td>R$ {{ number_format($item->price / 100, 2, ',', '.') }}</td>
-                            <td>R$ {{ number_format(($item->price * $item->quantity) / 100, 2, ',', '.') }}</td>
+
+                            {{-- ✅ AJUSTADO (do código 2): price é DECIMAL(10,2) em reais (sem /100) --}}
+                            <td>R$ {{ number_format($item->price, 2, ',', '.') }}</td>
+                            <td>R$ {{ number_format(($item->price * $item->quantity), 2, ',', '.') }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -435,7 +437,10 @@
                 </div>
 
                 <div class="label">Método</div>
-                <div class="value">{{ strtoupper($order->method ?? '—') }}</div>
+                {{-- ✅ AJUSTADO (do código 2): usa accessor payment_method_label (com fallback) --}}
+                <div class="value">
+                    {{ strtoupper($order->payment_method_label ?? $order->method ?? '—') }}
+                </div>
             </div>
         </div>
     </div>
