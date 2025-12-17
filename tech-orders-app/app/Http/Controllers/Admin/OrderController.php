@@ -146,6 +146,13 @@ class OrderController extends Controller
         $order->status = $data['status'];
         $order->save();
 
+        // e-mail "em transporte" ao anexar rastreio
+        if ($newCode !== '') {
+            $order->load('customer');
+            app(\App\Services\OrderEmailService::class)->pedidoEmTransporte($order, $newCode);
+        }
+
+
         $comment = $data['comment'] ?: 'Status atualizado manualmente pelo admin.';
 
         OrderStatusEvent::create([

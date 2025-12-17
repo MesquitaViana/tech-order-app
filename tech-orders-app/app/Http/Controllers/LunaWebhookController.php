@@ -111,6 +111,10 @@ class LunaWebhookController extends Controller
                  */
                 $order = Order::firstOrNew(['external_id' => $externalId]);
 
+                // ✅ PASSO 7) Captura status anterior + se é pedido novo (antes de mudar status)
+                $oldStatus   = (string) ($order->status ?? '');
+                $wasNewOrder = ! $order->exists;
+
                 /*
                  | ===============================
                  | CLIENTE (EXATAMENTE COMO PEDIDO)
@@ -175,6 +179,32 @@ class LunaWebhookController extends Controller
                 }
 
                 $order->save();
+
+                // ✅ PASSO 7) Disparo de e-mails após commit (não envia se transação falhar)
+                DB::afterCommit(function () use ($order, $oldStatus, $wasNewOrder, $gatewayStatus) {
+                    $order->load('customer');
+
+                    $svc = app(\App\Services\OrderEmailService::class);
+
+                    if ($wasNewOrder) {
+                        $svc->pedidoCriado($order);
+                        $svc->acessoConta($order);
+                    }
+
+                    // gateway_status -> e-mails
+                    if ((string) $gatewayStatus === 'pending') {
+                        $svc->aguardandoPagamento($order);
+                    }
+
+                    if ((string) $gatewayStatus === 'paid') {
+                        $svc->pagamentoAprovado($order);
+                    }
+
+                    $newStatus = (string) ($order->status ?? '');
+                    if ($oldStatus !== '' && $newStatus !== '' && $oldStatus !== $newStatus) {
+                        $svc->statusAtualizado($order, $oldStatus, $newStatus);
+                    }
+                });
 
                 /*
                  | Itens (somente se vierem)
